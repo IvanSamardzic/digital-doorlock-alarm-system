@@ -96,20 +96,20 @@ void LCD_init(){
 
 void LCD_send_command(unsigned char cmnd){
 	LCD_DATA = cmnd;
-	LCD_CONTROL = (0 << RW) | (0 << RS) | (1 << EN);
+	LCD_CONTROL |= (0 << RW) | (0 << RS) | (1 << EN);
 	//RS pin is cleared because cmnd will be written in command register
 	_delay_us(10); //wait for 10 microseconds
-	LCD_CONTROL = (0 << RW) | (0 << RS) | (0 << EN);
+	LCD_CONTROL |= (0 << RW) | (0 << RS) | (0 << EN);
 	//disabling command sending
 	_delay_us(100); //wait for 100 microseconds
 }
 
 void LCD_send_data(unsigned char data){
 	LCD_DATA = data;
-	LCD_CONTROL = (0 << RW) | (1 << RS) | (1 << EN);
+	LCD_CONTROL |= (0 << RW) | (1 << RS) | (1 << EN);
 	//RS pin is set because data will be written in LCD data register
 	_delay_us(10); //wait for 10 microseconds
-	LCD_CONTROL = (0 << RW) | (1 << RS) | (0 << EN);
+	LCD_CONTROL |= (0 << RW) | (1 << RS) | (0 << EN);
 	//disabling command sending
 	_delay_us(100); //wait for 100 microseconds
 }
@@ -332,7 +332,7 @@ void run_key_function(void){
 					//if the person does not guess the password 3 times in a row
                     block = 1; //increment the block variable
                     OUT_PORT |= 0X02; //buzzer on
-					OUT_PORT &= 0X1F;
+					OUT_PORT &= 0X1F; //turn off the LEDs
 					OUT_PORT |= 0X20; //blocked indicator
 					send_sms(); //send an SMS
 					EEPROM_write(10,block); //update the EEPROM register
@@ -347,7 +347,7 @@ void run_key_function(void){
 					OUT_PORT |= 0X40; //wait indicator
 					_delay_ms(2000); //wait for 2 seconds
 					OUT_PORT &= 0XFD; //turn off the buzzer
-					OUT_PORT &= 0X1F;
+					OUT_PORT &= 0X1F; //turn off the LEDs
 					OUT_PORT |= 0X80; //ready indicator
                 }
             }
